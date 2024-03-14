@@ -21,11 +21,13 @@ import {
   UserErrorInfoStyled,
   PasswordErrorInfoStyled,
   ValidMatchErrorInfoStyled,
+  CloseButtonStyled,
 } from './Register.styled';
+
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
-function Register() {
+function Register({ openModal, closeModal }) {
   const userRef = useRef();
   const errorRef = useRef();
 
@@ -43,6 +45,14 @@ function Register() {
 
   const [errorMessage, setErrorMessage] = useState('');
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (openModal) {
+      userRef.current?.showModal();
+    } else {
+      userRef.current?.close();
+    }
+  }, [openModal]);
 
   useEffect(() => {
     userRef.current.focus();
@@ -83,126 +93,136 @@ function Register() {
   };
 
   return (
-    <section>
-      <p ref={errorRef} aria-live="assertive">
-        {errorMessage}
-      </p>
+    <div>
+      <dialog
+        ref={userRef}
+        style={{ width: '300px', height: '350px', backgroundColor: 'black' }}
+      >
+        <section>
+          <p ref={errorRef} aria-live="assertive">
+            {errorMessage}
+          </p>
 
-      <RegisterFormStyled onSubmit={handleSubmit}>
-        <h2>Register</h2>
-        <label htmlFor="username">
-          Username:{' '}
-          <ValidUsernameStyled validName={validName}>
-            <FontAwesomeIcon icon={faCheck} />
-          </ValidUsernameStyled>
-          <InvalidUsernameStyled validName={validName} user={user}>
-            <FontAwesomeIcon icon={faTimes} />
-          </InvalidUsernameStyled>
-        </label>
+          <RegisterFormStyled onSubmit={handleSubmit}>
+            <CloseButtonStyled onClick={closeModal}>X</CloseButtonStyled>
+            <h2>Register</h2>
+            <label htmlFor="username">
+              Username:{' '}
+              <ValidUsernameStyled validName={validName}>
+                <FontAwesomeIcon icon={faCheck} />
+              </ValidUsernameStyled>
+              <InvalidUsernameStyled validName={validName} user={user}>
+                <FontAwesomeIcon icon={faTimes} />
+              </InvalidUsernameStyled>
+            </label>
 
-        {/* Username section */}
-        <input
-          type="text"
-          id="username"
-          ref={userRef}
-          autoComplete="off"
-          onChange={(e) => setUser(e.target.value)}
-          required
-          aria-invalid={validName ? 'false' : 'true'}
-          aria-describedby="useridnote"
-          onFocus={() => setUserFocus(true)}
-          onBlur={() => setUserFocus(false)}
-        />
-        <UserErrorInfoStyled
-          id="useridnote"
-          validName={validName}
-          user={user}
-          userFocus={userFocus}
-        >
-          <FontAwesomeIcon icon={faInfoCircle} />
-          &nbsp; 4 to 24 characters. <br />
-          Must begin with a letter. <br />
-          Letters, numbers, underscores, hyphens allowed.
-        </UserErrorInfoStyled>
+            {/* Username section */}
+            <input
+              type="text"
+              id="username"
+              ref={userRef}
+              autoComplete="off"
+              onChange={(e) => setUser(e.target.value)}
+              required
+              aria-invalid={validName ? 'false' : 'true'}
+              aria-describedby="useridnote"
+              onFocus={() => setUserFocus(true)}
+              onBlur={() => setUserFocus(false)}
+            />
+            <UserErrorInfoStyled
+              id="useridnote"
+              validName={validName}
+              user={user}
+              userFocus={userFocus}
+            >
+              <FontAwesomeIcon icon={faInfoCircle} />
+              &nbsp; 4 to 24 characters. <br />
+              Must begin with a letter. <br />
+              Letters, numbers, underscores, hyphens allowed.
+            </UserErrorInfoStyled>
 
-        {/* Password section */}
-        <label htmlFor="password">
-          Password:{' '}
-          <ValidPasswordStyled validPassword={validPassword}>
-            <FontAwesomeIcon icon={faCheck} />
-          </ValidPasswordStyled>
-          <InvalidPasswordStyled
-            validPassword={validPassword}
-            password={password}
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </InvalidPasswordStyled>
-        </label>
-        <input
-          type="password"
-          id="password"
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          aria-invalid={validPassword ? 'false' : 'true'}
-          aria-describedby="passwordnote"
-          onFocus={() => setPasswordFocus(true)}
-          onBlur={() => setPasswordFocus(false)}
-        />
-        <PasswordErrorInfoStyled
-          id="passwordnote"
-          validPassword={validPassword}
-          password={password}
-          passwordFocus={passwordFocus}
-        >
-          <FontAwesomeIcon icon={faInfoCircle} />
-          &nbsp; 8 to 24 characters. <br />
-          Must include uppercase and lowercase letters, a number and a special
-          character. <br />
-          Allowed special characters:
-          <span aria-label="exlamation mark"> ! </span>
-          <span aria-label="at symbol">@ </span>
-          <span aria-label="dollar signk">$ </span>
-          <span aria-label="percent">% </span>
-        </PasswordErrorInfoStyled>
+            {/* Password section */}
+            <label htmlFor="password">
+              Password:{' '}
+              <ValidPasswordStyled validPassword={validPassword}>
+                <FontAwesomeIcon icon={faCheck} />
+              </ValidPasswordStyled>
+              <InvalidPasswordStyled
+                validPassword={validPassword}
+                password={password}
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </InvalidPasswordStyled>
+            </label>
+            <input
+              type="password"
+              id="password"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              aria-invalid={validPassword ? 'false' : 'true'}
+              aria-describedby="passwordnote"
+              onFocus={() => setPasswordFocus(true)}
+              onBlur={() => setPasswordFocus(false)}
+            />
+            <PasswordErrorInfoStyled
+              id="passwordnote"
+              validPassword={validPassword}
+              password={password}
+              passwordFocus={passwordFocus}
+            >
+              <FontAwesomeIcon icon={faInfoCircle} />
+              &nbsp; 8 to 24 characters. <br />
+              Must include uppercase and lowercase letters, a number and a
+              special character. <br />
+              Allowed special characters:
+              <span aria-label="exlamation mark"> ! </span>
+              <span aria-label="at symbol">@ </span>
+              <span aria-label="dollar signk">$ </span>
+              <span aria-label="percent">% </span>
+            </PasswordErrorInfoStyled>
 
-        {/* Confirm password section */}
-        <label htmlFor="confirmPassword">
-          Confirm Password:{' '}
-          <ValidMatchStyled
-            matchPassword={matchPassword}
-            validMatch={validMatch}
-          >
-            <FontAwesomeIcon icon={faCheck} />
-          </ValidMatchStyled>
-          <InValidMatchStyled validMatch={validMatch}>
-            <FontAwesomeIcon icon={faTimes} />
-          </InValidMatchStyled>
-        </label>
-        <input
-          type="password"
-          id="confirmPassword"
-          onChange={(e) => setMatchPassword(e.target.value)}
-          required
-          aria-invalid={validPassword ? 'false' : 'true'}
-          aria-describedby="confirmnote"
-          onFocus={() => setMatchFocus(true)}
-          onBlur={() => setMatchFocus(false)}
-        />
-        <ValidMatchErrorInfoStyled
-          id="confirmnote"
-          validMatch={validMatch}
-          matchFocus={matchFocus}
-        >
-          <FontAwesomeIcon icon={faInfoCircle} />
-          &nbsp;Must match the first password field. <br />
-        </ValidMatchErrorInfoStyled>
-        <button
-          disabled={!validName || !validPassword || !validMatch ? true : false}
-        >
-          Sign Up
-        </button>
-      </RegisterFormStyled>
-    </section>
+            {/* Confirm password section */}
+            <label htmlFor="confirmPassword">
+              Confirm Password:{' '}
+              <ValidMatchStyled
+                matchPassword={matchPassword}
+                validMatch={validMatch}
+              >
+                <FontAwesomeIcon icon={faCheck} />
+              </ValidMatchStyled>
+              <InValidMatchStyled validMatch={validMatch}>
+                <FontAwesomeIcon icon={faTimes} />
+              </InValidMatchStyled>
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              onChange={(e) => setMatchPassword(e.target.value)}
+              required
+              aria-invalid={validPassword ? 'false' : 'true'}
+              aria-describedby="confirmnote"
+              onFocus={() => setMatchFocus(true)}
+              onBlur={() => setMatchFocus(false)}
+            />
+            <ValidMatchErrorInfoStyled
+              id="confirmnote"
+              validMatch={validMatch}
+              matchFocus={matchFocus}
+            >
+              <FontAwesomeIcon icon={faInfoCircle} />
+              &nbsp;Must match the first password field. <br />
+            </ValidMatchErrorInfoStyled>
+            <button
+              disabled={
+                !validName || !validPassword || !validMatch ? true : false
+              }
+            >
+              Sign Up
+            </button>
+          </RegisterFormStyled>
+        </section>
+      </dialog>
+    </div>
   );
 }
 

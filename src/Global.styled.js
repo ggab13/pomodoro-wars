@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
-export const GlobalStyle = createGlobalStyle`
+export const GlobalStyled = createGlobalStyle`
 body {
   margin: 0 auto;   
     text-align: center;

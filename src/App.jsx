@@ -1,13 +1,13 @@
-import { GlobalStyle } from './Global.styled.js';
+import { GlobalStyled } from './Global.styled.js';
 import Home from './pages/Home.jsx';
 
 function App() {
-    return (
-        <>
-            <GlobalStyle />
-            <Home />
-        </>
-    );
+  return (
+    <>
+      <GlobalStyled />
+      <Home />
+    </>
+  );
 }
 
 export default App;

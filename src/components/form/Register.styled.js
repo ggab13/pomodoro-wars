@@ -114,3 +114,14 @@ export const ValidMatchErrorInfoStyled = styled.p`
   border-radius: 5px;
   text-align: start;
 `;
+
+export const CloseButtonStyled = styled.button`
+  float: right;
+  color: red;
+  font-size: 24px;
+  width: auto;
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+`;
