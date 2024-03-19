@@ -2,7 +2,8 @@ import styled from 'styled-components';
 export const HeaderStyled = styled.header`
   display: flex;
   justify-content: space-between;
-  margin: 0px 3rem;
+  margin: 0 1rem;
+  padding: 0 3rem;
 `;
 
 export const TomatoSvgStyled = styled.div`

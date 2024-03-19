@@ -1,40 +1,58 @@
 import { useState } from 'react';
-import Signup from '../Form/Signup';
-import Register from '../form/Register';
+import Signup from '../auth/Signup';
+import Register from '../auth/Register';
 import { NavbarStyled, ButtonStyled } from './Navbar.styled';
-
-import { useQuery } from '@tanstack/react-query';
-import Axios from 'axios';
+import { addUser, auth } from '../../config/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { signOut } from 'firebase/auth';
 
 function Navbar() {
   const [modal, setModal] = useState(false);
+  const [user] = useAuthState(auth);
 
   const handleModalChange = () => {
     setModal(!modal);
   };
 
-  const { data: catData } = useQuery({
-    queryKey: ['cat'],
-    queryFn: () => {
-      return Axios.get('https://catfact.ninja/fact').then((res) => res.data);
-    },
-    //...
-  });
+  const signUserOut = async () => {
+    await signOut(auth);
+  };
 
   return (
     <NavbarStyled>
-      <ul>
+      {!user ? (
+        <ul>
+          {' '}
+          <li>
+            <ButtonStyled onClick={handleModalChange}>Register</ButtonStyled>
+          </li>
+          <li>
+            <ButtonStyled>Login</ButtonStyled>
+          </li>
+        </ul>
+      ) : (
+        <ul>
+          <li>
+            {' '}
+            <li>
+              <p>Welcome {user?.email}</p>
+            </li>
+            <ButtonStyled onClick={signUserOut}>Log out</ButtonStyled>
+          </li>
+        </ul>
+      )}
+
+      {/*   <ul>
         <li>
           <ButtonStyled onClick={handleModalChange}>Register</ButtonStyled>
         </li>
         <li>
           <ButtonStyled>Login</ButtonStyled>
         </li>
-      </ul>
+      </ul> */}
       {/* <p>{String(modal)}</p> */}
       {/*    {modal ? <Signup modal={modal} /> : ''} */}
       <Register openModal={modal} closeModal={() => setModal(false)} />
-      <>{catData.fact}</>
     </NavbarStyled>
   );
 }

@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
-
-import ReactDOM from 'react-dom';
+import { addUser, auth } from '../../config/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
@@ -11,6 +11,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
+  ValidEmailStyled,
+  InValidEmailStyled,
+  EmailErrorInfoStyled,
   ValidUsernameStyled,
   InvalidUsernameStyled,
   ValidPasswordStyled,
@@ -22,14 +25,21 @@ import {
   PasswordErrorInfoStyled,
   ValidMatchErrorInfoStyled,
   CloseButtonStyled,
+  SignUpButtonStyled,
 } from './Register.styled';
 
+// Regex for validation
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const EMAIL_REGEX = /^\S+@\S+$/;
 
 function Register({ openModal, closeModal }) {
   const userRef = useRef();
   const errorRef = useRef();
+
+  const [email, setEmail] = useState('');
+  const [validEmail, setValidEmail] = useState(false);
+  const [emailFocus, setEmailFocus] = useState(false);
 
   const [user, setUser] = useState('');
   const [validName, setValidName] = useState(false);
@@ -46,6 +56,10 @@ function Register({ openModal, closeModal }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [success, setSuccess] = useState(false);
 
+  function showData() {
+    console.log('email: ' + user + 'password: ' + password);
+  }
+
   useEffect(() => {
     if (openModal) {
       userRef.current?.showModal();
@@ -59,16 +73,17 @@ function Register({ openModal, closeModal }) {
   }, []);
 
   useEffect(() => {
+    const result = EMAIL_REGEX.test(email);
+    setValidEmail(result);
+  }, [email]);
+
+  useEffect(() => {
     const result = USER_REGEX.test(user);
-    console.log(result);
-    console.log(user);
     setValidName(result);
   }, [user]);
 
   useEffect(() => {
     const result = PWD_REGEX.test(password);
-    console.log(result);
-    console.log(password);
     setValidPassword(result);
     const match = password === matchPassword;
     setValidMatch(match);
@@ -79,33 +94,87 @@ function Register({ openModal, closeModal }) {
   }, [user, password, matchPassword]);
 
   const handleSubmit = async (e) => {
+    console.log('1');
     e.preventDefault();
 
     // If button enabled with JS
     const v1 = USER_REGEX.test(user);
-    const v2 = PWD_REGEX.test(pwd);
-    if (!v1 || v2) {
+    const v2 = PWD_REGEX.test(password);
+    if (!v1 || !v2) {
       setErrorMessage('Invalid entry');
       return;
     }
-    console.log(user, password);
+    console.log('3');
+    //addUser(user, password);
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed up
+        const user1 = JSON.stringify(userCredential.user);
+        console.log(user1 + 'User');
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage);
+        // ..
+      });
+
     setSuccess(true);
   };
 
   return (
     <div>
-      <dialog
-        ref={userRef}
-        style={{ width: '300px', height: '350px', backgroundColor: 'black' }}
-      >
-        <section>
-          <p ref={errorRef} aria-live="assertive">
-            {errorMessage}
-          </p>
-
+      <section>
+        <dialog
+          ref={userRef}
+          style={{
+            width: '320px',
+            height: '500px',
+            border: 'none',
+            backgroundColor: 'transparent',
+          }}
+        >
           <RegisterFormStyled onSubmit={handleSubmit}>
+            <p ref={errorRef} aria-live="assertive">
+              {errorMessage}
+            </p>
             <CloseButtonStyled onClick={closeModal}>X</CloseButtonStyled>
             <h2>Register</h2>
+
+            <label htmlFor="email">
+              Email:{' '}
+              <ValidEmailStyled validEmail={validEmail}>
+                <FontAwesomeIcon icon={faCheck} />
+              </ValidEmailStyled>
+              <InValidEmailStyled validEmail={validEmail} email={email}>
+                <FontAwesomeIcon icon={faTimes} />
+              </InValidEmailStyled>
+            </label>
+
+            {/* Username section */}
+            <input
+              type="email"
+              id="username"
+              autoComplete="off"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              aria-invalid={validEmail ? 'false' : 'true'}
+              aria-describedby="useridnote"
+              onFocus={() => setEmailFocus(true)}
+              onBlur={() => setEmailFocus(false)}
+            />
+            <EmailErrorInfoStyled
+              id="useridnote"
+              validEmail={validEmail}
+              email={email}
+              emailFocus={emailFocus}
+            >
+              <FontAwesomeIcon icon={faInfoCircle} />
+              &nbsp; Must contain @. <br />
+            </EmailErrorInfoStyled>
+
             <label htmlFor="username">
               Username:{' '}
               <ValidUsernameStyled validName={validName}>
@@ -207,21 +276,27 @@ function Register({ openModal, closeModal }) {
             <ValidMatchErrorInfoStyled
               id="confirmnote"
               validMatch={validMatch}
+              matchPassword={matchPassword}
               matchFocus={matchFocus}
             >
               <FontAwesomeIcon icon={faInfoCircle} />
               &nbsp;Must match the first password field. <br />
             </ValidMatchErrorInfoStyled>
-            <button
+            <SignUpButtonStyled
               disabled={
                 !validName || !validPassword || !validMatch ? true : false
               }
             >
               Sign Up
-            </button>
+            </SignUpButtonStyled>
+            <p>
+              {success
+                ? 'Succesfull registration for user' + auth.currentUser?.email
+                : ''}
+            </p>
           </RegisterFormStyled>
-        </section>
-      </dialog>
+        </dialog>
+      </section>
     </div>
   );
 }
