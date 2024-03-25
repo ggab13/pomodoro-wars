@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { addUser, auth } from '../../config/firebase';
+import { auth } from '../../config/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -29,7 +29,7 @@ import {
 } from './Register.styled';
 
 // Regex for validation
-const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+/* const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/; */
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^\S+@\S+$/;
 
@@ -41,9 +41,9 @@ function Register({ openModal, closeModal }) {
   const [validEmail, setValidEmail] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
 
-  const [user, setUser] = useState('');
+  /*   const [user, setUser] = useState('');
   const [validName, setValidName] = useState(false);
-  const [userFocus, setUserFocus] = useState(false);
+  const [userFocus, setUserFocus] = useState(false); */
 
   const [password, setPassword] = useState('');
   const [validPassword, setValidPassword] = useState(false);
@@ -77,10 +77,10 @@ function Register({ openModal, closeModal }) {
     setValidEmail(result);
   }, [email]);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const result = USER_REGEX.test(user);
     setValidName(result);
-  }, [user]);
+  }, [user]); */
 
   useEffect(() => {
     const result = PWD_REGEX.test(password);
@@ -91,24 +91,22 @@ function Register({ openModal, closeModal }) {
 
   useEffect(() => {
     setErrorMessage('');
-  }, [user, password, matchPassword]);
+  }, [, /* user */ password, matchPassword]);
 
   const handleSubmit = async (e) => {
-    console.log('1');
     e.preventDefault();
 
     // If button enabled with JS
-    const v1 = USER_REGEX.test(user);
+    const v1 = EMAIL_REGEX.test(email);
     const v2 = PWD_REGEX.test(password);
     if (!v1 || !v2) {
       setErrorMessage('Invalid entry');
       return;
     }
-    console.log('3');
-    //addUser(user, password);
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
+        console.log(userCredential);
         // Signed up
         const user1 = JSON.stringify(userCredential.user);
         console.log(user1 + 'User');
@@ -125,7 +123,7 @@ function Register({ openModal, closeModal }) {
   };
 
   return (
-    <div>
+    <>
       <section>
         <dialog
           ref={userRef}
@@ -145,10 +143,10 @@ function Register({ openModal, closeModal }) {
 
             <label htmlFor="email">
               Email:{' '}
-              <ValidEmailStyled validEmail={validEmail}>
+              <ValidEmailStyled $validEmail={validEmail}>
                 <FontAwesomeIcon icon={faCheck} />
               </ValidEmailStyled>
-              <InValidEmailStyled validEmail={validEmail} email={email}>
+              <InValidEmailStyled $validEmail={validEmail} $email={email}>
                 <FontAwesomeIcon icon={faTimes} />
               </InValidEmailStyled>
             </label>
@@ -156,7 +154,7 @@ function Register({ openModal, closeModal }) {
             {/* Username section */}
             <input
               type="email"
-              id="username"
+              id="email"
               autoComplete="off"
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -167,58 +165,57 @@ function Register({ openModal, closeModal }) {
             />
             <EmailErrorInfoStyled
               id="useridnote"
-              validEmail={validEmail}
-              email={email}
-              emailFocus={emailFocus}
+              $validEmail={validEmail}
+              $email={email}
+              $emailFocus={emailFocus}
             >
               <FontAwesomeIcon icon={faInfoCircle} />
               &nbsp; Must contain @. <br />
             </EmailErrorInfoStyled>
-
-            <label htmlFor="username">
-              Username:{' '}
-              <ValidUsernameStyled validName={validName}>
-                <FontAwesomeIcon icon={faCheck} />
-              </ValidUsernameStyled>
-              <InvalidUsernameStyled validName={validName} user={user}>
-                <FontAwesomeIcon icon={faTimes} />
-              </InvalidUsernameStyled>
-            </label>
-
-            {/* Username section */}
-            <input
-              type="text"
-              id="username"
-              ref={userRef}
-              autoComplete="off"
-              onChange={(e) => setUser(e.target.value)}
-              required
-              aria-invalid={validName ? 'false' : 'true'}
-              aria-describedby="useridnote"
-              onFocus={() => setUserFocus(true)}
-              onBlur={() => setUserFocus(false)}
-            />
-            <UserErrorInfoStyled
-              id="useridnote"
-              validName={validName}
-              user={user}
-              userFocus={userFocus}
-            >
-              <FontAwesomeIcon icon={faInfoCircle} />
-              &nbsp; 4 to 24 characters. <br />
-              Must begin with a letter. <br />
-              Letters, numbers, underscores, hyphens allowed.
-            </UserErrorInfoStyled>
-
+            {/*  <div>
+              <label htmlFor="username">
+                Username:{' '}
+                <ValidUsernameStyled $validName={validName}>
+                  <FontAwesomeIcon icon={faCheck} />
+                </ValidUsernameStyled>
+                <InvalidUsernameStyled $validName={validName} $user={user}>
+                  <FontAwesomeIcon icon={faTimes} />
+                </InvalidUsernameStyled>
+              </label>
+              Username section 
+              <input
+                type="text"
+                id="username"
+                ref={userRef}
+                autoComplete="off"
+                onChange={(e) => setUser(e.target.value)}
+                required
+                aria-invalid={validName ? 'false' : 'true'}
+                aria-describedby="useridnote"
+                onFocus={() => setUserFocus(true)}
+                onBlur={() => setUserFocus(false)}
+              />
+              <UserErrorInfoStyled
+                id="useridnote"
+                $validName={validName}
+                $user={user}
+                $userFocus={userFocus}
+              >
+                <FontAwesomeIcon icon={faInfoCircle} />
+                &nbsp; 4 to 24 characters. <br />
+                Must begin with a letter. <br />
+                Letters, numbers, underscores, hyphens allowed.
+              </UserErrorInfoStyled>
+            </div> */}
             {/* Password section */}
             <label htmlFor="password">
               Password:{' '}
-              <ValidPasswordStyled validPassword={validPassword}>
+              <ValidPasswordStyled $validPassword={validPassword}>
                 <FontAwesomeIcon icon={faCheck} />
               </ValidPasswordStyled>
               <InvalidPasswordStyled
-                validPassword={validPassword}
-                password={password}
+                $validPassword={validPassword}
+                $password={password}
               >
                 <FontAwesomeIcon icon={faTimes} />
               </InvalidPasswordStyled>
@@ -235,9 +232,9 @@ function Register({ openModal, closeModal }) {
             />
             <PasswordErrorInfoStyled
               id="passwordnote"
-              validPassword={validPassword}
-              password={password}
-              passwordFocus={passwordFocus}
+              $validPassword={validPassword}
+              $password={password}
+              $passwordFocus={passwordFocus}
             >
               <FontAwesomeIcon icon={faInfoCircle} />
               &nbsp; 8 to 24 characters. <br />
@@ -254,12 +251,12 @@ function Register({ openModal, closeModal }) {
             <label htmlFor="confirmPassword">
               Confirm Password:{' '}
               <ValidMatchStyled
-                matchPassword={matchPassword}
-                validMatch={validMatch}
+                $matchPassword={matchPassword}
+                $validMatch={validMatch}
               >
                 <FontAwesomeIcon icon={faCheck} />
               </ValidMatchStyled>
-              <InValidMatchStyled validMatch={validMatch}>
+              <InValidMatchStyled $validMatch={validMatch}>
                 <FontAwesomeIcon icon={faTimes} />
               </InValidMatchStyled>
             </label>
@@ -275,29 +272,35 @@ function Register({ openModal, closeModal }) {
             />
             <ValidMatchErrorInfoStyled
               id="confirmnote"
-              validMatch={validMatch}
-              matchPassword={matchPassword}
-              matchFocus={matchFocus}
+              $validMatch={validMatch}
+              $matchPassword={matchPassword}
+              $matchFocus={matchFocus}
             >
               <FontAwesomeIcon icon={faInfoCircle} />
               &nbsp;Must match the first password field. <br />
             </ValidMatchErrorInfoStyled>
             <SignUpButtonStyled
               disabled={
-                !validName || !validPassword || !validMatch ? true : false
+                /*  !validName || */ !validPassword || !validMatch
+                  ? true
+                  : false
               }
             >
               Sign Up
             </SignUpButtonStyled>
-            <p>
-              {success
-                ? 'Succesfull registration for user' + auth.currentUser?.email
-                : ''}
+            <p
+              style={{
+                textAlign: 'center',
+                color: '#2db83d',
+                fontSize: '1.25rem',
+              }}
+            >
+              {success ? 'Succesfull registration' : ''}
             </p>
           </RegisterFormStyled>
         </dialog>
       </section>
-    </div>
+    </>
   );
 }
 

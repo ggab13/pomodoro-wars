@@ -34,13 +34,14 @@ export const RegisterFormStyled = styled.form`
 `;
 
 export const ValidEmailStyled = styled.span`
-  display: ${(props) => (props.validEmail ? 'inline' : 'none')};
+  display: ${(props) => (props.$validEmail ? 'inline' : 'none')};
   min-width: 20px;
   color: #2db83d;
   white-space: nowrap;
 `;
 export const InValidEmailStyled = styled.span`
-  display: ${(props) => (props.validEmail || !props.email ? 'none' : 'inline')};
+  display: ${(props) =>
+    props.$validEmail || !props.$email ? 'none' : 'inline'};
   min-width: 20px;
   color: red;
   white-space: nowrap;
@@ -48,7 +49,7 @@ export const InValidEmailStyled = styled.span`
 
 export const EmailErrorInfoStyled = styled.p`
   display: ${(props) =>
-    props.emailFocus && props.email && !props.validEmail ? 'block' : 'none'};
+    props.$emailFocus && props.$email && !props.$validEmail ? 'block' : 'none'};
   background-color: black;
   width: 100%;
   margin: 5px auto;
@@ -61,13 +62,13 @@ export const EmailErrorInfoStyled = styled.p`
 `;
 
 export const ValidUsernameStyled = styled.span`
-  display: ${(props) => (props.validName ? 'inline' : 'none')};
+  display: ${(props) => (props.$validName ? 'inline' : 'none')};
   min-width: 20px;
   color: #2db83d;
   white-space: nowrap;
 `;
 export const InvalidUsernameStyled = styled.span`
-  display: ${(props) => (props.validName || !props.user ? 'none' : 'inline')};
+  display: ${(props) => (props.$validName || !props.$user ? 'none' : 'inline')};
   min-width: 20px;
   color: red;
   white-space: nowrap;
@@ -75,7 +76,7 @@ export const InvalidUsernameStyled = styled.span`
 
 export const UserErrorInfoStyled = styled.p`
   display: ${(props) =>
-    props.userFocus && props.user && !props.validName ? 'block' : 'none'};
+    props.$userFocus && props.$user && !props.$validName ? 'block' : 'none'};
   background-color: black;
   width: 100%;
   margin: 5px auto;
@@ -88,14 +89,14 @@ export const UserErrorInfoStyled = styled.p`
 `;
 
 export const ValidPasswordStyled = styled.span`
-  display: ${(props) => (props.validPassword ? 'inline' : 'none')};
+  display: ${(props) => (props.$validPassword ? 'inline' : 'none')};
   min-width: 20px;
   color: #2db83d;
   white-space: nowrap;
 `;
 export const InvalidPasswordStyled = styled.span`
   display: ${(props) =>
-    props.validPassword || !props.password ? 'none' : 'inline'};
+    props.$validPassword || !props.$password ? 'none' : 'inline'};
   min-width: 20px;
   color: red;
   white-space: nowrap;
@@ -103,7 +104,7 @@ export const InvalidPasswordStyled = styled.span`
 
 export const PasswordErrorInfoStyled = styled.p`
   display: ${(props) =>
-    props.passwordFocus && props.password && !props.validPassword
+    props.$passwordFocus && props.$password && !props.$validPassword
       ? 'block'
       : 'none'};
   background-color: black;
@@ -119,13 +120,13 @@ export const PasswordErrorInfoStyled = styled.p`
 
 export const ValidMatchStyled = styled.span`
   display: ${(props) =>
-    props.validMatch && props.matchPassword ? 'inline' : 'none'};
+    props.$validMatch && props.$matchPassword ? 'inline' : 'none'};
   min-width: 20px;
   color: #2db83d;
   white-space: nowrap;
 `;
 export const InValidMatchStyled = styled.span`
-  display: ${(props) => (props.validMatch ? 'none' : 'inline')};
+  display: ${(props) => (props.$validMatch ? 'none' : 'inline')};
   min-width: 20px;
   color: red;
   white-space: nowrap;
@@ -133,7 +134,7 @@ export const InValidMatchStyled = styled.span`
 
 export const ValidMatchErrorInfoStyled = styled.p`
   display: ${(props) =>
-    props.matchFocus && !props.validMatch ? 'block' : 'none'};
+    props.$matchFocus && !props.$validMatch ? 'block' : 'none'};
   background-color: black;
   width: 100%;
   margin: 5px auto;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Signup from '../auth/Signup';
 import Register from '../auth/Register';
 import { NavbarStyled, ButtonStyled } from './Navbar.styled';
-import { addUser, auth } from '../../config/firebase';
+import { auth } from '../../config/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { signOut } from 'firebase/auth';
 
@@ -32,11 +32,11 @@ function Navbar() {
         </ul>
       ) : (
         <ul>
+          {' '}
           <li>
-            {' '}
-            <li>
-              <p>Welcome {user?.email}</p>
-            </li>
+            <p>Welcome {user?.email}</p>
+          </li>
+          <li>
             <ButtonStyled onClick={signUserOut}>Log out</ButtonStyled>
           </li>
         </ul>

@@ -1,7 +1,7 @@
 import Navbar from './Navbar';
 import Tomato from '../../assets/tomato2.svg?react';
 import { H1Styled, HeaderStyled, TomatoSvgStyled } from './Header.styled';
-import { addUser, auth } from '../../config/firebase';
+import { auth } from '../../config/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 function Header() {
